@@ -3,278 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DormieGo | Student Living Simplified</title>
+    <title>DormieGo | Managed Student Living</title>
     <style>
         :root {
-            --primary: #3b82f6;
-            --accent: #f97316;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --success: #22c55e;
-            --danger: #ef4444;
+            --primary: #3b82f6; --accent: #f97316; --dark: #0f172a;
+            --light: #f1f5f9; --border: #cbd5e1; --danger: #ef4444; --success: #22c55e;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: var(--light); color: var(--dark); line-height: 1.6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--light); color: var(--dark); overflow-x: hidden; }
 
         /* Navigation */
         header {
             background: white; padding: 1rem 5%; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
+            align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
         }
-        .logo-box { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .logo-circle { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; }
-        .logo-text { font-size: 1.4rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); cursor: pointer; }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav ul li { cursor: pointer; font-weight: 600; color: #64748b; }
+        nav ul li.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
 
-        nav ul { display: flex; list-style: none; gap: 2rem; }
-        nav ul li { cursor: pointer; font-weight: 600; color: #64748b; transition: 0.2s; }
-        nav ul li:hover, nav ul li.active { color: var(--primary); }
-
-        .btn-sos { background: var(--danger); color: white; padding: 8px 16px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-sos:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
-
-        /* Layout */
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        /* General Layout */
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
         .view { display: none; }
-        .view.active { display: block; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .view.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- DASHBOARD VIEW (Page 2) --- */
-        .dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
-        .card { background: white; border-radius: 12px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .alert-banner { background: #fee2e2; border-left: 5px solid var(--danger); padding: 15px; margin-bottom: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
-        .stat-group { display: flex; gap: 15px; margin: 20px 0; }
-        .stat-box { flex: 1; background: var(--light); padding: 15px; border-radius: 8px; text-align: center; }
-        .stat-box h4 { font-size: 1.2rem; color: var(--primary); }
+        /* Dorm Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; position: relative; }
+        .card-img { height: 180px; background: #94a3b8; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; }
+        .card-body { padding: 20px; }
+        .btn-action { width: 100%; padding: 10px; margin-top: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-ar { background: var(--dark); color: white; }
+        .btn-outline { background: white; border: 1px solid var(--primary); color: var(--primary); }
 
-        /* --- BROWSE / COMPARISON --- */
-        .search-area { background: var(--primary); padding: 40px; border-radius: 15px; color: white; margin-bottom: 30px; text-align: center; }
-        .search-input { width: 100%; max-width: 500px; padding: 12px; border-radius: 8px; border: none; font-size: 1rem; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .dorm-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; position: relative; }
-        .dorm-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-        .dorm-img { height: 160px; background: #cbd5e1; position: relative; }
-        .tag { position: absolute; top: 10px; left: 10px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-        .compare-label { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+        /* Modals (New Windows) */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); display: none; z-index: 2000; 
+            justify-content: center; align-items: center; 
+        }
+        .modal-content { 
+            background: white; width: 90%; max-width: 900px; max-height: 90vh; 
+            border-radius: 15px; overflow-y: auto; padding: 40px; position: relative;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; }
 
-        /* --- COMMUNITY --- */
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 25px; }
-        .f-btn { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border); background: white; cursor: pointer; font-weight: 500; }
-        .f-btn.active { background: var(--dark); color: white; }
-        .post { display: flex; gap: 15px; padding: 20px; border-bottom: 1px solid var(--border); }
-        .post-vote { display: flex; flex-direction: column; align-items: center; color: #94a3b8; }
+        /* Compare Matrix */
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; background: var(--border); }
+        .compare-cell { background: white; padding: 15px; text-align: center; }
+        .header-cell { background: var(--light); font-weight: bold; }
 
-        /* --- COMPARISON OVERLAY --- */
-        #compare-tray { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 15px 30px; border-radius: 50px; display: none; align-items: center; gap: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 2000; }
+        /* Forum Threads */
+        .thread-item { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border); cursor: pointer; }
+        .thread-item:hover { border-color: var(--primary); }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-box" onclick="showView('browse')">
-        <div class="logo-circle"></div>
-        <div class="logo-text">DormieGo</div>
-    </div>
+    <div class="logo" onclick="showView('browse')">DormieGo</div>
     <nav>
         <ul>
-            <li id="nav-dash" onclick="showView('dash')">My Dashboard</li>
-            <li id="nav-browse" class="active" onclick="showView('browse')">Find Dorms</li>
-            <li id="nav-comm" onclick="showView('comm')">Community</li>
+            <li id="n-dash" onclick="showView('dash')">Dashboard</li>
+            <li id="n-browse" class="active" onclick="showView('browse')">Dorms</li>
+            <li id="n-comm" onclick="showView('comm')">Community</li>
         </ul>
     </nav>
-    <button class="btn-sos" onclick="triggerSOS()">24/7 SOS</button>
+    <button class="btn-action" style="width:auto; background:var(--danger); color:white; margin:0;" onclick="triggerSOS()">🚨 SOS</button>
 </header>
 
 <div class="container">
 
-    <div id="view-dash" class="view">
-        <div class="alert-banner">
-            <div><strong>Maintenance Notice:</strong> Water interruption scheduled for Building A on Friday (10:00 AM).</div>
-            <button style="background:none; border:none; cursor:pointer;">✕</button>
-        </div>
-
-        <div class="dash-grid">
-            <div class="main-col">
-                <div class="card">
-                    <h2>Welcome back, Maria!</h2>
-                    <p style="color: #64748b;">Resident at <strong>Urban Dorm Plus - Unit 402</strong></p>
-                    <div class="stat-group">
-                        <div class="stat-box"><h4>₱5,200</h4><p>Next Payment</p></div>
-                        <div class="stat-box"><h4>Dec 01</h4><p>Due Date</p></div>
-                        <div class="stat-box"><h4>98%</h4><p>Behavior Score</p></div>
-                    </div>
-                    <button class="btn-sos" style="background:var(--primary); width:100%; padding:12px;">Pay Current Balance</button>
-                </div>
-
-                <div class="card">
-                    <h3>Recent History</h3>
-                    <div style="margin-top:15px;">
-                        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border);">
-                            <span>Nov Rent Payment</span><span style="color:var(--success); font-weight:bold;">-₱5,200</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border);">
-                            <span>Oct Rent Payment</span><span style="color:var(--success); font-weight:bold;">-₱5,200</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="side-col">
-                <div class="card" style="background:var(--dark); color:white;">
-                    <h3>Quick Actions</h3>
-                    <ul style="list-style:none; margin-top:15px;">
-                        <li style="margin-bottom:10px; cursor:pointer;">🛠️ Request Repair</li>
-                        <li style="margin-bottom:10px; cursor:pointer;">📦 Guest Pass</li>
-                        <li style="margin-bottom:10px; cursor:pointer;">📄 Download Contract</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="view-browse" class="view active">
-        <div class="search-area">
-            <h1 style="margin-bottom:15px;">Your perfect room is one click away.</h1>
-            <input type="text" class="search-input" placeholder="Search by University (e.g. UST, UP, DLSU)...">
-        </div>
-
+    <div id="v-browse" class="view active">
+        <h1 style="margin-bottom:20px;">Find Your Next Home</h1>
         <div class="grid">
-            <div class="dorm-card">
-                <div class="dorm-img">
-                    <span class="tag">VERIFIED</span>
-                    <label class="compare-label"><input type="checkbox" onchange="toggleCompare('Urban Dorm Plus')"> Compare</label>
-                </div>
-                <div style="padding:15px;">
+            <div class="card">
+                <div class="card-img">🏙️</div>
+                <div class="card-body">
                     <h3>Urban Dorm Plus</h3>
-                    <p style="font-size:0.9rem; color:#64748b;">Sampaloc, Manila • 200m from UST</p>
-                    <div style="margin:10px 0; font-weight:bold; font-size:1.1rem; color:var(--primary);">₱5,200 /mo</div>
-                    <button onclick="viewDorm('Urban Dorm Plus')" style="width:100%; padding:8px; border-radius:5px; border:1px solid var(--primary); background:none; color:var(--primary); font-weight:bold; cursor:pointer;">View Details</button>
+                    <p>Sampaloc, Manila | ₱5,200/mo</p>
+                    <label style="display:block; margin: 10px 0;">
+                        <input type="checkbox" onchange="toggleSelection('Urban Dorm Plus', '₱5,200', '98%')"> Add to Compare
+                    </label>
+                    <button class="btn-action btn-ar" onclick="openAR('Urban Dorm Plus')">🕶️ Start 360° AR Tour</button>
+                    <button class="btn-action btn-outline" onclick="openDetails('Urban Dorm Plus', '₱5,200', 'Sampaloc', 'Our most popular choice for UST students. Includes 100mbps WiFi and 24/7 lobby security.')">View Full Details</button>
                 </div>
             </div>
-
-            <div class="dorm-card">
-                <div class="dorm-img">
-                    <span class="tag" style="background:#8b5cf6;">BEST VALUE</span>
-                    <label class="compare-label"><input type="checkbox" onchange="toggleCompare('Cozy Student Haven')"> Compare</label>
-                </div>
-                <div style="padding:15px;">
+            <div class="card">
+                <div class="card-img">🏠</div>
+                <div class="card-body">
                     <h3>Cozy Student Haven</h3>
-                    <p style="font-size:0.9rem; color:#64748b;">Espanya, Manila • 500m from UST</p>
-                    <div style="margin:10px 0; font-weight:bold; font-size:1.1rem; color:var(--primary);">₱4,500 /mo</div>
-                    <button onclick="viewDorm('Cozy Student Haven')" style="width:100%; padding:8px; border-radius:5px; border:1px solid var(--primary); background:none; color:var(--primary); font-weight:bold; cursor:pointer;">View Details</button>
-                </div>
-            </div>
-
-            <div class="dorm-card">
-                <div class="dorm-img">
-                    <label class="compare-label"><input type="checkbox" onchange="toggleCompare('Premium Suites')"> Compare</label>
-                </div>
-                <div style="padding:15px;">
-                    <h3>Premium Suites</h3>
-                    <p style="font-size:0.9rem; color:#64748b;">U-Belt, Manila • Near FEU</p>
-                    <div style="margin:10px 0; font-weight:bold; font-size:1.1rem; color:var(--primary);">₱7,800 /mo</div>
-                    <button onclick="viewDorm('Premium Suites')" style="width:100%; padding:8px; border-radius:5px; border:1px solid var(--primary); background:none; color:var(--primary); font-weight:bold; cursor:pointer;">View Details</button>
+                    <p>Espanya, Manila | ₱4,500/mo</p>
+                    <label style="display:block; margin: 10px 0;">
+                        <input type="checkbox" onchange="toggleSelection('Cozy Student Haven', '₱4,500', '92%')"> Add to Compare
+                    </label>
+                    <button class="btn-action btn-ar" onclick="openAR('Cozy Student Haven')">🕶️ Start 360° AR Tour</button>
+                    <button class="btn-action btn-outline" onclick="openDetails('Cozy Student Haven', '₱4,500', 'Espanya', 'A quiet, budget-friendly option. 5 mins walk to the university belt.')">View Full Details</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="view-comm" class="view">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
-            <h2>Community Forum</h2>
-            <button class="btn-sos" style="background:var(--accent);">+ Create Post</button>
-        </div>
-        
-        <div class="filter-bar">
-            <button class="f-btn active" onclick="filterPosts('all', this)">All Topics</button>
-            <button class="f-btn" onclick="filterPosts('roommate', this)">Roommate Finder</button>
-            <button class="f-btn" onclick="filterPosts('advice', this)">Student Advice</button>
-            <button class="f-btn" onclick="filterPosts('official', this)">Official Updates</button>
-        </div>
-
-        <div class="card" style="padding:0;">
-            <div class="post" data-cat="advice">
-                <div class="post-vote"><span>▲</span><strong>42</strong><span>▼</span></div>
-                <div>
-                    <h4 style="color:var(--primary); cursor:pointer;">How do you guys handle laundry day at Urban Dorm?</h4>
-                    <p style="font-size:0.85rem; color:#64748b;">Posted by <strong>josh_tech</strong> in <em>Student Advice</em> • 3h ago</p>
+    <div id="v-dash" class="view">
+        <div style="background:white; padding:30px; border-radius:15px; border:1px solid var(--border);">
+            <h2>Hi, Maria Santos</h2>
+            <p>Your current behavior score: <strong style="color:var(--success);">98/100 (A+)</strong></p>
+            <hr style="margin:20px 0; opacity:0.2;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div class="card-body" style="background:var(--light); border-radius:10px;">
+                    <h4>Next Rent: Dec 1</h4>
+                    <p style="font-size:1.5rem; font-weight:bold; color:var(--primary);">₱5,200</p>
+                    <button class="btn-action btn-ar" style="background:var(--success);">Pay Now</button>
                 </div>
-            </div>
-            <div class="post" data-cat="roommate">
-                <div class="post-vote"><span>▲</span><strong>12</strong><span>▼</span></div>
-                <div>
-                    <h4 style="color:var(--primary); cursor:pointer;">Looking for 1 female roommate for 2nd Sem (Nursing students pref)</h4>
-                    <p style="font-size:0.85rem; color:#64748b;">Posted by <strong>claire_v</strong> in <em>Roommate Finder</em> • 5h ago</p>
-                </div>
-            </div>
-            <div class="post" data-cat="official">
-                <div class="post-vote"><span>▲</span><strong>156</strong><span>▼</span></div>
-                <div>
-                    <h4 style="color:var(--primary); cursor:pointer;">New Security Protocol: Mandatory ID Check after 10PM</h4>
-                    <p style="font-size:0.85rem; color:#64748b;">Posted by <strong>Admin_Dormie</strong> in <em>Official Updates</em> • 1d ago</p>
+                <div class="card-body" style="background:var(--light); border-radius:10px;">
+                    <h4>Active Maintenance</h4>
+                    <p>Fix faucet (Unit 402)</p>
+                    <p style="color:var(--accent); font-weight:bold;">Status: In Progress</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="v-comm" class="view">
+        <h2>Tenant Community Forum</h2>
+        <div style="margin-top:20px;">
+            <div class="thread-item" onclick="openThread('Summer Heat Tips', 'Josh P.', 'Has anyone figured out the best fan placement for corner rooms?')">
+                <h4>Summer Heat Tips</h4>
+                <p style="font-size:0.8rem; color:gray;">Started by Josh P. • 15 Replies</p>
+            </div>
+            <div class="thread-item" onclick="openThread('Lost Keys Building B', 'Anna L.', 'Found some keys near the gym. Contact me!')">
+                <h4>Lost Keys Building B</h4>
+                <p style="font-size:0.8rem; color:gray;">Started by Anna L. • 2 Replies</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div id="compare-tray">
-    <span id="compare-text">0 items selected</span>
-    <button onclick="alert('Opening Comparison Matrix...')" style="padding:5px 15px; border-radius:20px; border:none; background:var(--primary); color:white; font-weight:bold; cursor:pointer;">Compare Now</button>
+<div id="modal-details" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModals()">×</span>
+        <h1 id="det-name">Dorm Name</h1>
+        <p id="det-loc" style="color:var(--primary); font-weight:bold;"></p>
+        <div style="height:300px; background:#ddd; margin:20px 0; border-radius:10px; display:flex; align-items:center; justify-content:center;">Photo Gallery Placeholder</div>
+        <p id="det-desc" style="line-height:1.8; font-size:1.1rem;"></p>
+        <button class="btn-action btn-ar" style="padding:15px; margin-top:20px;">Schedule a Physical Visit</button>
+    </div>
+</div>
+
+<div id="modal-compare" class="modal-overlay">
+    <div class="modal-content" style="max-width:1000px;">
+        <span class="close-modal" onclick="closeModals()">×</span>
+        <h2 style="margin-bottom:20px;">Dorm Comparison</h2>
+        <div class="compare-grid" id="compare-matrix">
+            </div>
+    </div>
+</div>
+
+<div id="modal-thread" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModals()">×</span>
+        <h2 id="thread-title">Thread Title</h2>
+        <p id="thread-meta" style="color:gray; margin-bottom:20px;"></p>
+        <div id="thread-body" style="padding:15px; background:var(--light); border-radius:8px;"></div>
+        <div style="margin-top:30px;">
+            <h4>Comments</h4>
+            <div style="margin-top:10px; padding:10px; border-left:3px solid var(--primary); background:#f8fafc;">
+                <strong>Maria Santos:</strong> I tried putting it near the window, it helps a lot!
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="compare-bar" style="position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--dark); color:white; padding:15px 30px; border-radius:50px; display:none; align-items:center; gap:20px; z-index:1500;">
+    <span id="sel-count">0 dorms selected</span>
+    <button onclick="launchComparison()" style="background:var(--primary); border:none; color:white; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">Compare Now</button>
 </div>
 
 <script>
+    // Navigation
     function showView(id) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById('view-' + id).classList.add('active');
-        
-        document.querySelectorAll('nav ul li').forEach(li => li.classList.remove('active'));
-        document.getElementById('nav-' + id).classList.add('active');
-        window.scrollTo(0,0);
+        document.querySelectorAll('nav ul li').forEach(l => l.classList.remove('active'));
+        document.getElementById('v-' + id).classList.add('active');
+        document.getElementById('n-' + id).classList.add('active');
     }
 
     // Comparison Logic
-    let selectedDorms = [];
-    function toggleCompare(name) {
-        const index = selectedDorms.indexOf(name);
-        if(index > -1) selectedDorms.splice(index, 1);
-        else selectedDorms.push(name);
-
-        const tray = document.getElementById('compare-tray');
-        const txt = document.getElementById('compare-text');
+    let selected = [];
+    function toggleSelection(name, price, score) {
+        const idx = selected.findIndex(i => i.name === name);
+        if(idx > -1) selected.splice(idx, 1);
+        else selected.push({name, price, score});
         
-        if(selectedDorms.length > 0) {
-            tray.style.display = 'flex';
-            txt.innerText = `${selectedDorms.length} Dorm(s) selected`;
-        } else {
-            tray.style.display = 'none';
-        }
+        const bar = document.getElementById('compare-bar');
+        document.getElementById('sel-count').innerText = selected.length + " selected";
+        bar.style.display = selected.length > 0 ? 'flex' : 'none';
     }
 
-    // Filter Logic
-    function filterPosts(cat, btn) {
-        document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    function launchComparison() {
+        if(selected.length < 2) return alert("Select at least 2 dorms to compare.");
+        const matrix = document.getElementById('compare-matrix');
+        let html = `<div class="compare-cell header-cell">Feature</div>`;
+        selected.forEach(s => html += `<div class="compare-cell header-cell">${s.name}</div>`);
         
-        document.querySelectorAll('.post').forEach(p => {
-            if(cat === 'all' || p.getAttribute('data-cat') === cat) p.style.display = 'flex';
-            else p.style.display = 'none';
-        });
+        html += `<div class="compare-cell">Price</div>`;
+        selected.forEach(s => html += `<div class="compare-cell">${s.price}</div>`);
+        
+        html += `<div class="compare-cell">Tenant Score</div>`;
+        selected.forEach(s => html += `<div class="compare-cell" style="color:var(--success); font-weight:bold;">${s.score}</div>`);
+        
+        matrix.innerHTML = html;
+        document.getElementById('modal-compare').style.display = 'flex';
     }
 
-    function viewDorm(name) {
-        alert("Redirecting to full detail page for: " + name + "\nFeatures: 360° AR Tour, Full Amenities List, and Behavior Assessment.");
+    // Details logic
+    function openDetails(name, price, loc, desc) {
+        document.getElementById('det-name').innerText = name;
+        document.getElementById('det-loc').innerText = loc + " | " + price;
+        document.getElementById('det-desc').innerText = desc;
+        document.getElementById('modal-details').style.display = 'flex';
+    }
+
+    // Forum Logic
+    function openThread(title, author, body) {
+        document.getElementById('thread-title').innerText = title;
+        document.getElementById('thread-meta').innerText = "Started by " + author;
+        document.getElementById('thread-body').innerText = body;
+        document.getElementById('modal-thread').style.display = 'flex';
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    function openAR(name) {
+        alert("👓 [AR MODE ACTIVATED]\nScanning your room environment...\nInitializing 360° View of " + name);
     }
 
     function triggerSOS() {
-        if(confirm("ACTIVATE EMERGENCY RESPONSE?\nThis will alert DormieGo Security and your Landlord of your current GPS location.")) {
-            alert("Security is on the way. Please stay in a safe place.");
+        if(confirm("🚨 ACTIVATE EMERGENCY SERVICES?\nThis will connect you to the 24/7 Security Desk and send your GPS location.")) {
+            alert("Emergency support is on the way. Stay calm.");
         }
     }
 </script>
-
 </body>
 </html>
