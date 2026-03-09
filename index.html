@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DormieGo - Find Your Home</title>
+    <style>
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-orange: #f97316;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --emergency-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+        }
+
+        /* Navigation */
+        header {
+            background-color: var(--card-bg);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav ul li {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: color 0.3s;
+        }
+
+        nav ul li:hover, nav ul li.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-sos {
+            background-color: var(--emergency-red);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Main Container & Tabs */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-blue), #2563eb);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            gap: 0.5rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-orange);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Grids for Dorms & Roommates */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img {
+            height: 200px;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 3rem;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-price {
+            color: var(--primary-blue);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-ar {
+            background-color: #1f2937;
+            color: white;
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Community & Forum */
+        .forum-header {
+            background-color: var(--primary-orange);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .thread {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .thread h3 {
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Behavior Scale Badge */
+        .badge-scale {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        .scale-excellent { background-color: #dcfce7; color: #166534; }
+        .scale-good { background-color: #fef9c3; color: #854d0e; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="switchTab('dorms')">DormieGo</div>
+        <nav>
+            <ul>
+                <li onclick="switchTab('dorms')" id="nav-dorms" class="active">Find Dorms</li>
+                <li onclick="switchTab('roommates')" id="nav-roommates">Roommate Finder</li>
+                <li onclick="switchTab('community')" id="nav-community">Community Forum</li>
+            </ul>
+        </nav>
+        <div class="nav-actions">
+            <button class="btn-sos" onclick="triggerSOS()">🚨 24/7 Emergency SOS</button>
+            <span style="cursor: pointer; font-weight: bold;">Account</span>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div id="dorms" class="tab-content active">
+            <div class="hero">
+                <h1>Find a dorm that feels like home</h1>
+                <p style="margin-bottom: 1.5rem;">Explore trusted, verified accommodations with our AI Finder.</p>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search by university, city, or price...">
+                    <button class="btn-primary">Search</button>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 1.5rem;">Dorms matching your search</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-img">🛏️</div>
+                    <div class="card-content">
+                        <div class="card-title">Urban Dorm Plus</div>
+                        <p class="card-price">₱5,200 / month</p>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">📍 Sampaloc, Manila</p>
+                        <button class="btn-ar" onclick="launchAR('Urban Dorm Plus')">🕶️ Launch AR 360° Tour</button>
+                        <button style="width: 100%; padding: 0.5rem; background: var(--bg-color); border: none; border-radius: 6px; cursor: pointer;">View Details</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-img">🏢</div>
+                    <div class="card-content">
+                        <div class="card-title">Premium Student Living</div>
+                        <p class="card-price">₱6,500 / month</p>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">📍 U-Belt, Manila</p>
+                        <button class="btn-ar" onclick="launchAR('Premium Student Living')">🕶️ Launch AR 360° Tour</button>
+                        <button style="width: 100%; padding: 0.5rem; background: var(--bg-color); border: none; border-radius: 6px; cursor: pointer;">View Details</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-img">🏠</div>
+                    <div class="card-content">
+                        <div class="card-title">Cozy Student Haven</div>
+                        <p class="card-price">₱4,500 / month</p>
+                        <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">📍 Sampaloc, Manila</p>
+                        <button class="btn-ar" onclick="launchAR('Cozy Student Haven')">🕶️ Launch AR 360° Tour</button>
+                        <button style="width: 100%; padding: 0.5rem; background: var(--bg-color); border: none; border-radius: 6px; cursor: pointer;">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="roommates" class="tab-content">
+            <div class="hero" style="background: linear-gradient(135deg, #10b981, #059669);">
+                <h1>Find Compatible Roommates</h1>
+                <p>Connect with verified students to share a unit and split costs.</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-content">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 2.5rem;">👩🏽‍🎓</div>
+                            <div>
+                                <div class="card-title" style="margin: 0;">Maria Santos</div>
+                                <p style="color: var(--text-light); font-size: 0.9rem;">2nd Year, Nursing</p>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Looking for 1 roommate near U-Belt. Quiet studier, keeps things neat.</p>
+                        <div>
+                            <span class="badge-scale scale-excellent">Tenant Behavior Scale: A+ (Excellent)</span>
+                        </div>
+                        <button class="btn-primary" style="width: 100%; margin-top: 1rem;">Connect</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="font-size: 2.5rem;">👨🏻‍🎓</div>
+                            <div>
+                                <div class="card-title" style="margin: 0;">Alex Johnson</div>
+                                <p style="color: var(--text-light); font-size: 0.9rem;">3rd Year, Engineering</p>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Have a slot in Urban Dorm Plus. Gamer, easy-going. Move in ASAP.</p>
+                        <div>
+                            <span class="badge-scale scale-good">Tenant Behavior Scale: B+ (Good)</span>
+                        </div>
+                        <button class="btn-primary" style="width: 100%; margin-top: 1rem;">Connect</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="community" class="tab-content">
+            <div class="forum-header">
+                <h2>Find advice and community</h2>
+                <p>Connect with fellow residents, share tips, and discuss concerns.</p>
+                <button class="btn-primary" style="margin-top: 1rem; background-color: white; color: var(--primary-orange);">+ New Thread</button>
+            </div>
+
+            <h3 style="margin-bottom: 1rem;">Trending Conversations</h3>
+            
+            <div class="thread">
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-light);">Maria Santos • 2 hours ago</p>
+                    <h3>Best tips for keeping your dorm room cool during summer?</h3>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">I've been struggling with heat in my room. Any suggestions?</p>
+                </div>
+                <button class="btn-primary" style="padding: 0.5rem 1rem;">Reply (3)</button>
+            </div>
+
+            <div class="thread">
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-light);">Alex Johnson • 5 hours ago</p>
+                    <h3>Community movie night this weekend!</h3>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Join us for a night of fun and free snacks! Rooftop at 7 PM.</p>
+                </div>
+                <button class="btn-primary" style="padding: 0.5rem 1rem;">Reply (12)</button>
+            </div>
+
+            <div class="thread">
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-light);">Lisa Chen • 1 day ago</p>
+                    <h3>Landlord Issue: Maintenance taking too long</h3>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Has anyone else experienced delays with sink repairs in Building B?</p>
+                </div>
+                <button class="btn-primary" style="padding: 0.5rem 1rem;">Reply (8)</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab Navigation Logic
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active class from nav links
+            document.querySelectorAll('nav ul li').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+
+        // Security Feature Trigger
+        function triggerSOS() {
+            if(confirm("🚨 EMERGENCY SOS ACTIVATED 🚨\n\nDo you need immediate connection to local emergency services or campus security?")) {
+                alert("Connecting to 24/7 Emergency Support...");
+            }
+        }
+
+        // AR Feature Trigger
+        function launchAR(dormName) {
+            alert("🕶️ Launching AR 360° Interactive Tour for " + dormName + "...\n(Please grant camera/sensor permissions on your device)");
+        }
+    </script>
+</body>
+</html>
